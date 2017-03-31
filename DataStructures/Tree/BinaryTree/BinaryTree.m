@@ -15,14 +15,17 @@
 
 @interface BinaryTree() {
     
-    Node *root;
     Stack *stack;
+    Node *root;
     Node *unsequenceRoot;
+    Node *bstRoot;
 }
 
 @end
 
 @implementation BinaryTree
+
+#pragma mark - Create Tree, UnSequences Tree, Binary Search Tree
 
 - (void)createBinaryTree {
     
@@ -48,6 +51,24 @@
     root.right.left.left.data = 7;
 }
 
+- (void)createBinarySearchTree {
+    
+    bstRoot = [[Node alloc] init];
+    bstRoot.data = 4;
+    
+    bstRoot.left = [Node new];
+    bstRoot.left.data = 2;
+    
+    bstRoot.right = [Node new];
+    bstRoot.right.data = 5;
+    
+    bstRoot.left.left = [Node new];
+    bstRoot.left.left.data = 1;
+    
+    bstRoot.left.right = [Node new];
+    bstRoot.left.right.data = 3;
+}
+
 - (void)createUnsequenceBinaryTree {
     
     unsequenceRoot = [[Node alloc] init];
@@ -61,7 +82,7 @@
     
     unsequenceRoot.left.right.left = [Node new];
     unsequenceRoot.left.right.left.data = 1;
-
+    
     unsequenceRoot.left.right.right = [Node new];
     unsequenceRoot.left.right.right.data = 11;
     
@@ -80,6 +101,7 @@
     
     [self createBinaryTree];
     [self createUnsequenceBinaryTree];
+    [self createBinarySearchTree];
     
     //Section 1
     NSLog(@"\nSection1.A. Preorder traversal");
@@ -88,8 +110,11 @@
     NSLog(@"\nSection1.B. Post Order Traveral");
     [self postOrderTraversal:root];
     
-    NSLog(@"\nSection1.C. In Order Traveral");
+    NSLog(@"\nSection1.C1. In Order Traveral");
     [self inOrderTraversal:root];
+    
+    NSLog(@"\nSection1.C2. In Order Traveral Using Stack");
+    [self inOrderUsingStack:root];
     
     //Section 2
     NSLog(@"\nSection2.A Size of tree %d", [self calculateSizeOfTree:root]); // Size of left subtree + 1 + Size of right subtree
@@ -103,12 +128,83 @@
     NSLog(@"\nSection3.A Find depth or height of Binary tree %d",[self calculateHeightOfBinaryTree:root]);
     
     NSLog(@"\nSection3.B Level Order Traversal or BFS");
-    [self printLevelOrderForAllLevel:root];
     //TODO: Can be done using queue also. Practice after queue is done
+    [self printLevelOrderForAllLevel:root];
     
+    NSLog(@"\nSection4.A Check if two trees are identical");
+    if ([self checkIfTwoTreeAreIdentical:root andSecondTree:unsequenceRoot]) {
+        NSLog(@"Trees are identical");
+    } else {
+        NSLog(@"Trees are not identical");
+    }
+    
+    NSLog(@"\nSection4.B Delete a tree")
+    [self deleteTree:root];
+    
+    NSLog(@"\nSection4.C Create Mirror Tree");
+    //To test this, Print inorder before and after in binary search tree
+    [self createMirrorTree:bstRoot];
+
 }
 
-#pragma mark - Level Order or BFS Traversal
+#pragma mark - Section4 - Identical, Mirror image
+
+- (BOOL)checkIfTwoTreeAreIdentical:(Node *)node1 andSecondTree:(Node *)node2 {
+    
+    if (!node1 && !node2) {
+        
+        return YES;
+    }
+    if (node1 && node2) {
+        
+        /*
+        if (node1.data == node2.data) {
+            [self checkIfTwoTreeAreIdentical:node1.left andSecondTree:node2.left];
+            [self checkIfTwoTreeAreIdentical:node1.right andSecondTree:node2.right];
+        } else {
+            
+            return NO;
+        }
+         */
+        
+        return (node1.data == node2.data &&
+                [self checkIfTwoTreeAreIdentical:node1.left andSecondTree:node2.left] &&
+                [self checkIfTwoTreeAreIdentical:node1.right andSecondTree:node2.right]);
+    }
+    return YES;
+}
+
+- (void)deleteTree:(Node *)node {
+    
+    /* Use post order approach
+     1. Delete child first before deleting parent
+     2. No extra space complexity
+     */
+    
+    if (!node) {
+        return;
+    }
+    [self deleteTree:node.left];
+    [self deleteTree:node.right];
+    NSLog(@"Deleting node: %d",node.data);
+    node = nil;
+}
+
+- (void)createMirrorTree:(Node *)node {
+    
+    if (!node) {
+        return;
+    }
+    
+    [self createMirrorTree:node.left];
+    [self createMirrorTree:node.right];
+    
+    Node *temp = node.left;
+    node.left = node.right;
+    node.right = temp;
+}
+
+#pragma mark - Section3 - Level Order or BFS Traversal
 
 - (void)printLevelOrderForGivenLevel:(Node *)node andLevel:(int)level {
     
@@ -124,7 +220,7 @@
     }
 }
 
--(void)printLevelOrderForAllLevel:(Node *)node {
+- (void)printLevelOrderForAllLevel:(Node *)node {
     
     //To print all level order, print all nodes from level 1 to height of tree
     if (!node) {
@@ -148,7 +244,7 @@
     return rDepth + 1;
 }
 
-#pragma mark - Size, maximum, minimum, print left view
+#pragma mark - Section2 - Size, maximum, minimum, print left view
 
 - (int)calculateSizeOfTree:(Node *)node {
     
@@ -197,7 +293,7 @@
     return res;
 }
 
-#pragma mark - Depth First Search (DFS) Tree Traversal
+#pragma mark - Section1 - Depth First Search (DFS) Tree Traversal
 
 - (void)preOrderTraversal:(Node *)node {
     
@@ -228,6 +324,35 @@
     [self inOrderTraversal:node.left];
     NSLog(@"%d",node.data);
     [self inOrderTraversal:node.right];
+}
+
+- (void)inOrderUsingStack:(Node *)node {
+    
+    NSMutableArray *stackArr = [NSMutableArray array];
+    Node *current = node;
+    [stackArr addObject:node];
+    
+    while (stackArr.count) {
+        
+        current = current.left;
+        
+        while (current) {
+            
+            [stackArr addObject:current];
+            current = current.left;
+        }
+        
+        current = [stackArr lastObject];
+        [stackArr removeLastObject];
+        NSLog(@"%d",current.data);
+        
+        
+        current = current.right;
+        if (current) {
+            [stackArr addObject:current];
+        }
+        
+    }
 }
 
 
