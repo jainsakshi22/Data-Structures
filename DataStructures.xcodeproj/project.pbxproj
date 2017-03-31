@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B80142B71E8E5CF500B98CC1 /* Stack.m in Sources */ = {isa = PBXBuildFile; fileRef = B80142B61E8E5CF500B98CC1 /* Stack.m */; };
 		B80952F61E8A81370023C307 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = B80952F51E8A81370023C307 /* main.m */; };
 		B80953021E8A82650023C307 /* BinaryTree.m in Sources */ = {isa = PBXBuildFile; fileRef = B80953011E8A82650023C307 /* BinaryTree.m */; };
 		B80953081E8A87720023C307 /* Node.m in Sources */ = {isa = PBXBuildFile; fileRef = B80953071E8A87720023C307 /* Node.m */; };
@@ -25,6 +26,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		B80142B51E8E5CF500B98CC1 /* Stack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Stack.h; sourceTree = "<group>"; };
+		B80142B61E8E5CF500B98CC1 /* Stack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Stack.m; sourceTree = "<group>"; };
 		B80952F21E8A81370023C307 /* DataStructures */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DataStructures; sourceTree = BUILT_PRODUCTS_DIR; };
 		B80952F51E8A81370023C307 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		B80953001E8A82650023C307 /* BinaryTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BinaryTree.h; sourceTree = "<group>"; };
@@ -44,6 +47,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B80142B11E8E5C7700B98CC1 /* Stack */ = {
+			isa = PBXGroup;
+			children = (
+				B80142B51E8E5CF500B98CC1 /* Stack.h */,
+				B80142B61E8E5CF500B98CC1 /* Stack.m */,
+			);
+			path = Stack;
+			sourceTree = "<group>";
+		};
 		B80952E91E8A81370023C307 = {
 			isa = PBXGroup;
 			children = (
@@ -72,6 +84,7 @@
 		B80952FC1E8A818D0023C307 /* Tree */ = {
 			isa = PBXGroup;
 			children = (
+				B80142B11E8E5C7700B98CC1 /* Stack */,
 				B80953061E8A876D0023C307 /* Node.h */,
 				B80953071E8A87720023C307 /* Node.m */,
 				B80952FD1E8A819C0023C307 /* BinaryTree */,
@@ -145,6 +158,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B80142B71E8E5CF500B98CC1 /* Stack.m in Sources */,
 				B80953021E8A82650023C307 /* BinaryTree.m in Sources */,
 				B80952F61E8A81370023C307 /* main.m in Sources */,
 				B80953081E8A87720023C307 /* Node.m in Sources */,
@@ -274,6 +288,7 @@
 				B80952FB1E8A81370023C307 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
