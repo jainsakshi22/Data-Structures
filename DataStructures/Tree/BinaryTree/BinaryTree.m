@@ -54,19 +54,25 @@
 - (void)createBinarySearchTree {
     
     bstRoot = [[Node alloc] init];
-    bstRoot.data = 4;
+    bstRoot.data = 6;
     
     bstRoot.left = [Node new];
-    bstRoot.left.data = 2;
+    bstRoot.left.data = 4;
     
     bstRoot.right = [Node new];
-    bstRoot.right.data = 5;
+    bstRoot.right.data = 7;
     
     bstRoot.left.left = [Node new];
-    bstRoot.left.left.data = 1;
+    bstRoot.left.left.data = 2;
     
     bstRoot.left.right = [Node new];
     bstRoot.left.right.data = 3;
+    
+    bstRoot.right.left = [Node new];
+    bstRoot.right.left.data = 5;
+    
+    bstRoot.right.right = [Node new];
+    bstRoot.right.right.data = 8;
 }
 
 - (void)createUnsequenceBinaryTree {
@@ -117,15 +123,15 @@
     [self inOrderUsingStack:root];
     
     //Section 2
-    NSLog(@"\nSection2.A Size of tree %d", [self calculateSizeOfTree:root]); // Size of left subtree + 1 + Size of right subtree
+    NSLog(@"\nSection2.A Size of tree \n%d", [self calculateSizeOfTree:root]); // Size of left subtree + 1 + Size of right subtree
     
     NSLog(@"\nSection2.B Print Left View Binary Tree");
     [self printLeftViewOfBinaryTree:root];
     
-    NSLog(@"\nSection2.C Find max in Binary Tree %d", [self findMaxInBinaryTree:unsequenceRoot]);
+    NSLog(@"\nSection2.C Find max in Binary Tree \n%d", [self findMaxInBinaryTree:unsequenceRoot]);
     
     //Section 3
-    NSLog(@"\nSection3.A Find depth or height of Binary tree %d",[self calculateHeightOfBinaryTree:root]);
+    NSLog(@"\nSection3.A Find depth or height of Binary tree \n%d",[self calculateHeightOfBinaryTree:root]);
     
     NSLog(@"\nSection3.B Level Order Traversal or BFS");
     //TODO: Can be done using queue also. Practice after queue is done
@@ -144,6 +150,11 @@
     NSLog(@"\nSection4.C Create Mirror Tree");
     //To test this, Print inorder before and after in binary search tree
     [self createMirrorTree:bstRoot];
+    
+    NSLog(@"\nSection 4.D Print out all of its root-to-leaf paths one per line")
+    [self printAllRootToLeafPaths:unsequenceRoot];
+    
+    NSLog(@"\nSection4.E Get leaf node count \n%d",[self getCountofLeafNode:bstRoot]);
 
 }
 
@@ -152,7 +163,6 @@
 - (BOOL)checkIfTwoTreeAreIdentical:(Node *)node1 andSecondTree:(Node *)node2 {
     
     if (!node1 && !node2) {
-        
         return YES;
     }
     if (node1 && node2) {
@@ -204,6 +214,54 @@
     node.right = temp;
 }
 
+- (void)printAllRootToLeafPaths:(Node *)node {
+    
+    NSMutableArray *pathLengthArr = [NSMutableArray array];
+    [self printAllRootToLeafPaths:node withArray:pathLengthArr withLength:0];
+}
+
+- (void)printAllRootToLeafPaths:(Node *)node withArray:(NSMutableArray *)pathArr withLength:(int)pathLength {
+    
+    if (!node) {
+        return;
+    }
+    
+    [pathArr addObject:[NSNumber numberWithInt:node.data]];
+    pathLength++;
+    
+    if (!node.left && !node.right) {
+        
+        [self printArrayElements:pathArr];
+        [pathArr removeLastObject];
+    } else {
+        
+        [self printAllRootToLeafPaths:node.left withArray:pathArr withLength:pathLength];
+        [self printAllRootToLeafPaths:node.right withArray:pathArr withLength:pathLength];
+        [pathArr removeLastObject];
+    }
+    
+}
+
+- (void)printArrayElements:(NSMutableArray *)array {
+    
+    for (int i = 0; i < array.count; i++) {
+        printf("%d ", [array[i] intValue]);
+    }
+    printf("\n");
+}
+
+- (int)getCountofLeafNode:(Node *)node {
+    
+    if (!node) {
+        return 0;
+    }
+    
+    if (!node.left && !node.right) {
+        return 1;
+    }
+    return [self getCountofLeafNode:node.left] + [self getCountofLeafNode:node.right];
+}
+
 #pragma mark - Section3 - Level Order or BFS Traversal
 
 - (void)printLevelOrderForGivenLevel:(Node *)node andLevel:(int)level {
@@ -212,7 +270,8 @@
         return;
     }
     if (level == 1) {
-        NSLog(@"%d",node.data);
+        printf("%d ",node.data);
+        
     } else {
         
         [self printLevelOrderForGivenLevel:node.left andLevel:level-1];
@@ -228,6 +287,7 @@
     }
     for (int i = 1;i <= [self calculateHeightOfBinaryTree:node] ; i++) {
         [self printLevelOrderForGivenLevel:node andLevel:i];
+        printf("\n"); //Add this to print line by line.
     }
 }
 
@@ -298,7 +358,6 @@
 - (void)preOrderTraversal:(Node *)node {
     
     if (!node) {
-        
         return;
     }
     NSLog(@"%d",node.data);
@@ -345,7 +404,6 @@
         current = [stackArr lastObject];
         [stackArr removeLastObject];
         NSLog(@"%d",current.data);
-        
         
         current = current.right;
         if (current) {
