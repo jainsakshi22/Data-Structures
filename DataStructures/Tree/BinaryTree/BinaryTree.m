@@ -19,6 +19,8 @@
     Node *root;
     Node *unsequenceRoot;
     Node *bstRoot;
+    Node *sumRoot;
+    Node *fullBRoot;
 }
 
 @end
@@ -27,6 +29,12 @@
 
 #pragma mark - Create Tree, UnSequences Tree, Binary Search Tree
 
+/*
+                1
+        2               3
+    4       5         6
+                    7
+ */
 - (void)createBinaryTree {
     
     root = [[Node alloc] init];
@@ -100,7 +108,51 @@
     
     unsequenceRoot.right.right.left = [Node new];
     unsequenceRoot.right.right.left.data = 4;
+}
+
+- (void)createBinarySumTree {
+
+    sumRoot = [[Node alloc] init];
+    sumRoot.data = 10;
     
+    sumRoot.left = [Node new];
+    sumRoot.left.data = 8;
+    
+    sumRoot.right = [Node new];
+    sumRoot.right.data = 2;
+    
+    sumRoot.left.left = [Node new];
+    sumRoot.left.left.data = 3;
+    
+    sumRoot.left.right = [Node new];
+    sumRoot.left.right.data = 5;
+    
+    sumRoot.right.left = [Node new];
+    sumRoot.right.left.data = 2;
+}
+
+- (void)createFullBinaryTree {
+    
+    fullBRoot = [[Node alloc] init];
+    fullBRoot.data = 50;
+    
+    fullBRoot.left = [Node new];
+    fullBRoot.left.data = 7;
+    
+    fullBRoot.right = [Node new];
+    fullBRoot.right.data = 2;
+    
+    fullBRoot.left.left = [Node new];
+    fullBRoot.left.left.data = 3;
+    
+    fullBRoot.left.right = [Node new];
+    fullBRoot.left.right.data = 5;
+    
+    fullBRoot.right.left = [Node new];
+    fullBRoot.right.left.data = 1;
+    
+    fullBRoot.right.right = [Node new];
+    fullBRoot.right.right.data = 30;
 }
 
 - (void)performVariousOperations {
@@ -108,6 +160,8 @@
     [self createBinaryTree];
     [self createUnsequenceBinaryTree];
     [self createBinarySearchTree];
+    [self createBinarySumTree];
+    [self createFullBinaryTree];
     
     //Section 1
     NSLog(@"\nSection1.A. Preorder traversal");
@@ -158,7 +212,92 @@
     [self printAllRootToLeafPaths:unsequenceRoot];
     
     NSLog(@"\nSection4.E Get leaf node count \n%d",[self getCountofLeafNode:bstRoot]);
+    
+    NSLog(@"\nSection5.A Check for children sum property in a binary tree");
+    if ([self checkIfTreeHoldsChildrenSumProperty:sumRoot]) {
+        NSLog(@"Tree holds children sum property");
+    } else {
+        NSLog(@"Tree does not hold children sum property");
+    }
+    
+    NSLog(@"\nSection5.B Convert an arbitary tree into children sum property tree");
+    [self convertATreeInChildrenSumTree:fullBRoot];
+    
+    NSLog(@"test %d",root.data);
 
+}
+
+#pragma mark - Section 5 - Children Sum
+
+- (BOOL)checkIfTreeHoldsChildrenSumProperty:(Node *)node {
+    
+    if (!node || (!node.left && !node.right)) {
+        return YES;
+    }
+    
+    int lData = 0, rData = 0, data = 0;
+    data = node.data;
+    if (node.left) {
+        lData = node.left.data;
+    }
+    
+    if (node.right) {
+        rData = node.right.data;
+    }
+    
+    if (lData + rData == data &&
+        [self checkIfTreeHoldsChildrenSumProperty:node.left] &&
+        [self checkIfTreeHoldsChildrenSumProperty:node.right]) {
+        
+        return YES;
+    }
+    return NO;
+}
+
+- (void)convertATreeInChildrenSumTree:(Node *)node {
+    
+    int lData = 0, rData = 0, data = 0;
+    
+    if (!node || (!node.left && !node.right)) {
+        
+        return;
+    }
+    
+    [self convertATreeInChildrenSumTree:node.left];
+    [self convertATreeInChildrenSumTree:node.right];
+    
+    data = node.data;
+    if (node.left) {
+        lData = node.left.data;
+    }
+    
+    if (node.right) {
+        rData = node.right.data;
+    }
+    
+    int diff = data - (lData + rData);
+    if (diff > 0) {
+        
+        //Increment subtrees also to maintain the children subtree
+        [self incrementSubtreeToMakeChildrenSumTree:node withDiff:diff];
+        
+    } else if (diff < 0) {
+        
+        node.data = data + abs(diff);
+    }
+}
+
+- (void)incrementSubtreeToMakeChildrenSumTree:(Node *)node withDiff:(int)diff {
+    
+    if (node.left) {
+        
+        node.left.data = node.left.data + diff;
+        [self incrementSubtreeToMakeChildrenSumTree:node.left withDiff:diff];
+    } else if (node.right) {
+        
+        node.right.data = node.right.data + diff;
+        [self incrementSubtreeToMakeChildrenSumTree:node.right withDiff:diff];
+    }
 }
 
 #pragma mark - Section4 - Identical, Mirror image
