@@ -137,6 +137,9 @@
     //TODO: Can be done using queue also. Practice after queue is done
     [self printLevelOrderForAllLevel:root];
     
+    NSLog(@"\nSection3.C Spiral Level Order Traversal or BFS");
+    [self printSpiralLevelOrderForAllLevel:root];
+    
     NSLog(@"\nSection4.A Check if two trees are identical");
     if ([self checkIfTwoTreeAreIdentical:root andSecondTree:unsequenceRoot]) {
         NSLog(@"Trees are identical");
@@ -285,9 +288,102 @@
     if (!node) {
         return;
     }
+
     for (int i = 1;i <= [self calculateHeightOfBinaryTree:node] ; i++) {
         [self printLevelOrderForGivenLevel:node andLevel:i];
         printf("\n"); //Add this to print line by line.
+    }
+    
+}
+
+- (void)printSpiralLevelOrderForAllLevel:(Node *)node {
+    
+    //To print all level order, print all nodes from level 1 to height of tree
+    if (!node) {
+        return;
+    }
+    
+    NSLog(@"Print spiral by 1st method using pointer by n2 time complexity");
+    BOOL isLeftTraversal = YES;
+    for (int i = 1;i <= [self calculateHeightOfBinaryTree:node] ; i++) {
+        isLeftTraversal = !isLeftTraversal;
+        [self printSpiralLevelOrderForGivenLevel:node andLevel:i withPointer: &isLeftTraversal];
+        printf("\n"); //Add this to print line by line.
+    }
+    
+    NSLog(@"Print spiral by using 2 stack by 0(n) time and 0(n) space complexity");
+    [self printSpiralAtGivenLevelUsingStack:node];
+    
+}
+
+- (void)printSpiralLevelOrderForGivenLevel:(Node *)node andLevel:(int)level withPointer:(BOOL *)isLeftTraversal {
+    
+    if (!node) {
+        return;
+    }
+    if (level == 1) {
+        printf("%d ",node.data);
+        
+    } else {
+        
+        if (*isLeftTraversal) {
+            
+            [self printSpiralLevelOrderForGivenLevel:node.left andLevel:level-1 withPointer:isLeftTraversal];
+            [self printSpiralLevelOrderForGivenLevel:node.right andLevel:level-1 withPointer:isLeftTraversal];
+        } else {
+            
+            [self printSpiralLevelOrderForGivenLevel:node.right andLevel:level-1 withPointer:isLeftTraversal];
+            [self printSpiralLevelOrderForGivenLevel:node.left andLevel:level-1 withPointer:isLeftTraversal];
+        }
+    }
+}
+
+- (void)printSpiralAtGivenLevelUsingStack:(Node *)node {
+    
+    NSMutableArray *leftToRight = [NSMutableArray array];
+    NSMutableArray *rightToLeft = [NSMutableArray array];
+    
+    [rightToLeft addObject:node];
+    
+    while (!leftToRight.count || !rightToLeft.count) {
+        
+        if (!leftToRight.count && !rightToLeft.count) {
+            return;
+        }
+        
+        while (rightToLeft.count) {
+            
+            Node *current = [rightToLeft lastObject];
+            printf("%d ",current.data);
+            
+            if (current.right) {
+                [leftToRight addObject:current.right];
+            }
+            if (current.left) {
+                [leftToRight addObject:current.left];
+            }
+            
+            [rightToLeft removeObject:current];
+        }
+        
+        printf("\n");
+        
+        while (leftToRight.count) {
+            
+            Node *current = [leftToRight lastObject];
+            printf("%d ",current.data);
+            
+            if (current.left) {
+                [rightToLeft addObject:current.left];
+            }
+            if (current.right) {
+                [rightToLeft addObject:current.right];
+            }
+            
+            [leftToRight removeObject:current];
+        }
+        
+        printf("\n");
     }
 }
 
